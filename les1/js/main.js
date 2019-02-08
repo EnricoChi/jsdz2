@@ -25,7 +25,7 @@ const renderProduct = (title, price) => {
 
 const renderPage = list => {
   const productList = list.map(item => renderProduct(item.title, item.price));
-  document.querySelector('.products').innerHTML = productList.join(''); // <----- .join() уберёт запятые
+  document.querySelector('.products').innerHTML = productList.join(''); // <--- .join() сделает строку и уберёт запятые
 
   // Не уверен что это тот вариант упрощения который имелся ввиду, но на ум вот так приходит:
   list.forEach(
