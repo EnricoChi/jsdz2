@@ -10,7 +10,7 @@ const products = [
   // Лучше конечно в обьект каждого продукта пихать, но пока так просто
   img = 'https://via.placeholder.com/200/169AAF/fff?text=product+img';
 
-const renderProduct = (title = 'default title', price = 0) => {
+const renderProduct = (title, price) => {
   return `<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
               <div class="card text-white bg-dark mb-2">
                   <img src="${img}">
