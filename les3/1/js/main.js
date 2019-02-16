@@ -192,11 +192,12 @@ class CartItem extends ProductItem {
 
   render() {
     return `
-      <div class="row align-items-center">
-        <div class="col-2"><img class="img-fluid" src="${this.img}"></div>
-        <div class="col-3">Name: ${this.title}</div>
-        <div class="col-2">Price: <i class="fas fa-dollar-sign"></i> ${this.price}</div>
-        <div class="col-3">Qt: ${this.qt}</div>
+      <div class="row align-items-center"
+        data-id=${this.id}>
+        <div class="col-1"><img class="img-fluid" src="${this.img}"></div>
+        <div class="col-3">${this.title}</div>
+        <div class="col-3">Price: <i class="fas fa-dollar-sign"></i> ${this.price}</div>
+        <div class="col-3">Qt: <span class="product-qt">${this.qt}</span></div>
         <div class="col-2">
           <div class="btn-group">
             <button class="btn btn-danger">-</button>
