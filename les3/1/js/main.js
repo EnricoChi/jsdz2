@@ -44,7 +44,7 @@ class ProductsList {
   render() {
     const block = document.querySelector(this.container);
     for (let product of this.goods) {
-      const productObj = new ProductItem(product.product_name, product.price, product.id_product);
+      const productObj = new ProductItem(product.id_product, product.product_name, product.price);
       this.allProducts.push(productObj);
       block.insertAdjacentHTML('beforeend', productObj.render());
     }
@@ -52,31 +52,32 @@ class ProductsList {
 }
 
 class ProductItem {
-  constructor(title, price, id, img = 'https://via.placeholder.com/200/169AAF/fff?text=product+img') {
+  constructor(id, title, price, img = 'https://via.placeholder.com/200/169AAF/fff?text=product+img') {
+    this.id = id;
     this.title = title;
     this.price = price;
-    this.id = id;
     this.img = img;
   }
 
   render() {
-    return `<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-              <div class="card text-white bg-dark mb-2">
-                  <img src="${this.img}">
-                  <div class="card-body">
-                    <h5 class="card-title">${this.title}</h5>
-                    <p class="card-text"><i class="fas fa-dollar-sign"></i> ${this.price}</p>
-                    <a href="#"
-                        data-method="addProduct"
-                        data-product-title="${this.title}"
-                        data-product-price="${this.price}"
-                        data-product-id="${this.id}"
-                        class="cart-btn btn btn-info d-block">
-                        Add to cart
-                    </a>
-                  </div>
-              </div>
-          </div>`
+    return `
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
+        <div class="card text-white bg-dark mb-2">
+          <img src="${this.img}">
+          <div class="card-body">
+            <h5 class="card-title">${this.title}</h5>
+            <p class="card-text"><i class="fas fa-dollar-sign"></i> ${this.price}</p>
+            <a href="#"
+                data-method="addProduct"
+                data-product-id="${this.id}"
+                data-product-title="${this.title}"
+                data-product-price="${this.price}"
+                class="cart-btn btn btn-info d-block">
+                Add to cart
+            </a>
+          </div>
+        </div>
+    </div>`
   }
 }
 
@@ -84,53 +85,96 @@ let products = new ProductsList();
 
 
 class Cart {
-  constructor(container = '#cart') {
+  constructor(container = '#cart', productsContainer = '.products') {
     this.container = container;
+    this.productsContainer = productsContainer;
     this.rawProducts = [];
     this.allCartItems = [];
-    this._getBasket();
+    this.changeProduct()
   }
 
   _getBasket() {
-    fetch(`${API}/getBasket.json`)
+    return fetch(`${API}/getBasket.json`)
       .then(response => response.json())
-      .then(result => {
-        this.rawProducts = result.contents;
-        this.render();
-      })
+      .then(result => this.rawProducts = result.contents)
   }
 
-  /**
-   * Слушает эвент клика по кнопке -/+ на товаре
-   */
+  init() {
+    this._getBasket().then(() => this.render())
+  }
+
   changeProduct() {
-    document.querySelector(this.wrapper).addEventListener('click', event => {
+    // let methods = {addProduct: this.addProduct};
+    document.querySelector(this.container).addEventListener('click', event => {
       if (event.target.classList.contains('cart-btn')) {
         const productEl = event.target,
-          id = productEl.dataset.productId,
-          title = productEl.dataset.productTitle,
-          price = productEl.dataset.productPrice,
+          parentEl = productEl.parentElement,
+          id = parentEl.dataset.productId,
           method = productEl.dataset.method;
-        this[method](id, title, price);
+        this[method](id);
       }
     });
+
+    document.querySelector(this.productsContainer).addEventListener('click', event => {
+      if (event.target.classList.contains('cart-btn')) {
+        const productEl = event.target,
+          id = productEl.dataset.productId;
+
+        products.allProducts.forEach(item => {
+          if (item.id === +id) {
+            let newProduct = new CartItem(item.id, item.title, item.price);
+            if (!this.addProduct(id)) {
+              this.pushProduct(newProduct);
+            }
+          }
+        });
+      }
+    });
+  }
+
+  pushProduct(newProduct) {
+    this.allCartItems.push(newProduct);
+    const block = document.querySelector('.modal-body');
+    block.insertAdjacentHTML('beforeend', newProduct.render());
   }
 
   /**
    * Добавит товар
    */
-  addProduct(id, title, price) {
-    // for (let product of this.goods) {
-    const cartItemObj = new CartItem(id, title, price);
-    this.allCartItems.push(cartItemObj);
-    this.render();
+  addProduct(id) {
+    for (let i = 0; i < this.allCartItems.length; i++) {
+      if (this.allCartItems[i].id === +id) {
+        this.updateCartItem(id, i, '+');
+        return true;
+      }
+    }
   }
 
   /**
    * Удалить товар
    */
-  delProduct(productId) {
-    console.log(productId);
+  delProduct(id) {
+    for (let i = 0; i < this.allCartItems.length; i++) {
+      if (this.allCartItems[i].id === +id) {
+        this.updateCartItem(id, i, '-');
+      }
+    }
+  }
+
+  updateCartItem(id, index, action) {
+    let del = false;
+    if (action === '-') {
+      if (this.allCartItems[index].qt > 1) {
+        --this.allCartItems[index].qt;
+      } else {
+        del = this.allCartItems.splice(index, 1);
+      }
+    } else {
+      ++this.allCartItems[index].qt;
+    }
+
+    document.querySelector(`[data-product-id="${id}"]`)
+      .outerHTML = !del ? this.allCartItems[index].render() : '';
   }
 
   /**
@@ -168,28 +212,36 @@ class Cart {
 }
 
 class CartItem extends ProductItem {
-  constructor(id, title, price, qt, img) {
-    super(title, price, img);
+  constructor(id, title, price, qt = 1) {
+    super(id, title, price);
     this.qt = qt;
   }
 
   render() {
     return `
-      <div class="row align-items-center"
-        data-id=${this.id}>
-        <div class="col-1"><img class="img-fluid" src="${this.img}"></div>
-        <div class="col-3">${this.title}</div>
-        <div class="col-3">Price: <i class="fas fa-dollar-sign"></i> ${this.price}</div>
-        <div class="col-3">Qt: <span class="product-qt">${this.qt}</span></div>
-        <div class="col-2">
-          <div class="btn-group">
-            <button data-method="delProduct" class="btn btn-danger">-</button>
-            <button data-method="addProduct" class="btn btn-info">+</button>
+      <div data-product-id=${this.id}>
+        <div class="cart row align-items-center">
+          <div class="col-1"><img class="img-fluid" src="${this.img}"></div>
+          <div class="col-3">${this.title}</div>
+          <div class="col-3">
+            Price: <i class="fas fa-dollar-sign"></i> <span class="product-price">${this.price * this.qt}</span>
+          </div>
+          <div class="col-3">Qt: <span class="product-qt">${this.qt}</span></div>
+          <div class="col-2">
+            <div class="btn-group"
+              data-product-title="${this.title}"
+              data-product-price="${this.price}"
+              data-product-qt="${this.qt}"
+              data-product-id=${this.id}>
+              <button data-method="delProduct" class="cart-btn btn btn-danger">-</button>
+              <button data-method="addProduct" class="cart-btn btn btn-info">+</button>
+            </div>
           </div>
         </div>
-      </div>
-      <hr>`
+        <hr>
+      </div>`
   }
 }
 
-new Cart();
+let test = new Cart();
+test.init();
