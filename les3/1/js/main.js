@@ -111,7 +111,6 @@ class Cart {
           title = productEl.dataset.productTitle,
           price = productEl.dataset.productPrice,
           method = productEl.dataset.method;
-
         this[method](id, title, price);
       }
     });
@@ -124,9 +123,7 @@ class Cart {
     // for (let product of this.goods) {
     const cartItemObj = new CartItem(id, title, price);
     this.allCartItems.push(cartItemObj);
-    console.log(this.allCartItems);
-    // block.insertAdjacentHTML('beforeend', productObj.render());
-    // }
+    this.render();
   }
 
   /**
@@ -176,20 +173,6 @@ class CartItem extends ProductItem {
     this.qt = qt;
   }
 
-  /**
-   * Посчитает количество каждого товара
-   */
-  getCountItems() {
-
-  }
-
-  /**
-   * Посчитает итоговую сумму на количество каждого товара
-   */
-  getPriceItems() {
-
-  }
-
   render() {
     return `
       <div class="row align-items-center"
@@ -200,9 +183,9 @@ class CartItem extends ProductItem {
         <div class="col-3">Qt: <span class="product-qt">${this.qt}</span></div>
         <div class="col-2">
           <div class="btn-group">
-            <button class="btn btn-danger">-</button>
-            <button class="btn btn-info">+</button>
-           </div>
+            <button data-method="delProduct" class="btn btn-danger">-</button>
+            <button data-method="addProduct" class="btn btn-info">+</button>
+          </div>
         </div>
       </div>
       <hr>`
