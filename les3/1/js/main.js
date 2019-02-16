@@ -163,7 +163,7 @@ class Cart {
   render() {
     const block = document.querySelector('.modal-body');
     for (let item of this.rawProducts) {
-      const cartObj = new CartItem(item.product_name, item.price, item.id_product);
+      const cartObj = new CartItem(item.id_product, item.product_name, item.price, item.quantity);
       this.allCartItems.push(cartObj);
       block.insertAdjacentHTML('beforeend', cartObj.render());
     }
@@ -171,12 +171,9 @@ class Cart {
 }
 
 class CartItem extends ProductItem {
-
-
-  constructor(id, title, price, img) {
+  constructor(id, title, price, qt, img) {
     super(title, price, img);
-    this.itemsCount = null;
-    this.itemsPrice = null;
+    this.qt = qt;
   }
 
   /**
@@ -196,9 +193,16 @@ class CartItem extends ProductItem {
   render() {
     return `
       <div class="row align-items-center">
-        <div class="col-3"><img class="img-fluid" src="${this.img}"></div>
+        <div class="col-2"><img class="img-fluid" src="${this.img}"></div>
         <div class="col-3">Name: ${this.title}</div>
-        <div class="col-3">Price: <i class="fas fa-dollar-sign"></i> ${this.price}</div>
+        <div class="col-2">Price: <i class="fas fa-dollar-sign"></i> ${this.price}</div>
+        <div class="col-3">Qt: ${this.qt}</div>
+        <div class="col-2">
+          <div class="btn-group">
+            <button class="btn btn-danger">-</button>
+            <button class="btn btn-info">+</button>
+           </div>
+        </div>
       </div>
       <hr>`
   }
