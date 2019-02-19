@@ -22,10 +22,17 @@ const text = "One: 'Hi Mary.' Two: 'Oh, hi.'\n" +
   "Two: 'I'll see you next time.'\n" +
   "One: 'Sure. Bye.'";
 
+// Переслушивал в лекции кусок про дз раза 4, так и не понял в 1 или в 2 действия нужнос делать.
+// Поэтому сделал все варианты
+
+// Просто заменит ' везде на "
 let text1 = text.replace(/'/g, '"');
 console.log(text1, '----------------1');
+
+// Заменит " в словах на '
 text1 = text1.replace(/\b"\b/g, '\'');
 console.log(text1, '----------------2');
 
+// Сделает сразу правильно в 1 действие
 let text2 = text.replace(/\B'/g, '"');
 console.log(text2, '----------------3');
