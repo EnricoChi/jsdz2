@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Интернет магазин</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-light bg-dark navbar-dark navbar-expand-lg mb-5">
+        <a class="navbar-brand" href="#">Some store</a>
+        <form id="search" class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        </form>
+
+        <div id="cart-wrapper" class="ml-auto position-relative">
+            <button @click="cartShow = !cartShow"
+                    type="button" class="btn btn-info">
+                <i class="fas fa-shopping-cart"></i> Cart
+            </button>
+            <div v-if="cartShow" id="cart" class="cart position-absolute">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cart</h5>
+                        <div class="row">
+                            <div class="col-3">Amount: <span>{{ amount }}</span></div>
+                            <div class="col-3">Count: <span>{{ countGoods }}</span></div>
+                        </div>
+                        <div class="card-text py-3">
+                            <div v-for="product of products" :key="product.id_product"
+                                 class="row align-items-center my-2 pb-2 border-bottom">
+                                <div class="col-2">
+                                    <img class="img-fluid" src="https://via.placeholder.com/200/169AAF/fff?text=product+img">
+                                </div>
+                                <div class="col-2">{{ product.product_name }}</div>
+                                <div class="col-3">
+                                    Price: <i class="fas fa-dollar-sign"></i>
+                                    <span class="product-price">{{ product.price * product.quantity }}</span>
+                                </div>
+                                <div class="col-3">Qt: <span class="product-qt">{{ product.quantity }}</span></div>
+                                <div class="col-2">
+                                    <div class="btn-group">
+                                        <button @click="delProduct(product.id_product, $event)" class="cart-btn btn btn-danger">
+                                            -
+                                        </button>
+                                        <button @click="addProduct(product.id_product, $event)" class="cart-btn btn btn-info">
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="container-fluid">
+        <div id="products" class="row products">
+            <div v-for="product of showedProducts"
+                 :key="product.id_product"
+                 class="product col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
+                <div class="card text-white bg-dark mb-2">
+                    <img src="https://via.placeholder.com/200/169AAF/fff?text=product+img">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.product_name }}</h5>
+                        <p class="card-text"><i class="fas fa-dollar-sign"></i> {{ product.price }}</p>
+                        <a href="#" class="cart-btn btn btn-info d-block">
+                            Add to cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"-->
+<!--integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"-->
+<!--crossorigin="anonymous"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"-->
+<!--integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"-->
+<!--crossorigin="anonymous"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"-->
+<!--integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"-->
+<!--crossorigin="anonymous"></script>-->
+<script src="js/vue_main.js"></script>
+</body>
+</html>

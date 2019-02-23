@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAKQ,8BAAmB,CCL3B,KAAM,CACJ,KAAK,CAAE,CAAC,CACR,GAAG,CAAE,IAAI,CACT,QAAQ,CAAE,QAAQ,CAClB,KAAK,CAAE,KAAK,CACZ,UAAU,CAAE,wBAA2B,CACvC,aAAa,CAAE,GAAG",
+"sources": ["common.scss","kit.scss"],
+"names": [],
+"file": "common.css"
+}
